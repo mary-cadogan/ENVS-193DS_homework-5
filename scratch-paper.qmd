@@ -1,0 +1,126 @@
+---
+title: "scratch-paper"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(here)
+library(ggeffects)
+library(performance)
+library(naniar)
+library(flextable)
+library(car)
+library(broom)
+library(corrplot)
+library(AICcmodavg)
+library(GGally)
+```
+
+```{r}
+plant <- read_csv(here("knb-lter-hfr", "hf109-01-sarracenia.csv")) %>% 
+  select(totmass, species, feedlevel, sla,chlorophyll, amass, num.lvs, num.phylls)
+```
+
+```{r}
+gg_miss_var(plant)
+```
+
+```{r}
+plant_subset <- plant %>% 
+  drop_na(sla, chlorophyll, amass, num.lvs, num.phylls)
+```
+
+```{r}
+plant_cor <- plant_subset %>% 
+  select(feedlevel:num.phylls) %>% 
+  cor(method = "pearson")
+```
+
+```{r}
+corrplot(plant_cor,
+         # change the shape of what's in the cells
+         method = "ellipse",
+         addCoef.col = "black"
+         )
+```
+
+```{r}
+plant_subset %>% 
+  select(species:num.phylls) %>% 
+  ggpairs()
+```
+
+```{r}
+null <- lm(totmass ~ 1, data = plant_subset)
+full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
+```
+
+```{r}
+par(mfrow = c(2, 2))
+plot(full)
+```
+
+```{r}
+check_normality(full)
+check_heteroscedasticity(full)
+```
+
+```{r}
+full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
+
+plot(full_log)
+check_normality(full_log)
+check_heteroscedasticity(full_log)
+```
+
+```{r}
+car::vif(full_log)
+```
+
+```{r}
+model2_log <- lm(log(totmass) ~ species, data = plant_subset)
+```
+
+```{r}
+check_normality(model2_log)
+check_heteroscedasticity(model2_log)
+```
+
+```{r}
+null_log <- lm(log(totmass) ~ 1, data =plant_subset)
+```
+
+```{r}
+AICc(full_log)
+AICc(model2_log)
+AICc(null_log)
+
+MuMIn::AICc(full_log, model2_log, null_log)
+MuMIn::model.sel(full_log, model2_log, null_log)
+```
+
+```{r}
+summary(full_log)
+
+table <- tidy(full_log, conf.int = TRUE) %>% 
+  #change p value numbers if they are really small
+  #change the estimates, standard error, and t-statistics to round to __ digits 
+  #using mutate
+  #make it into a flextable 
+  flextable() %>% 
+  #fit it to the viewer
+  autofit()
+  
+```
+
+```{r}
+model_pred <- ggpredict(full_log, terms = "species", back.transform = TRUE)
+
+plot(ggpredict(full_log, terms = "chlorophyll", back.transform = TRUE, add.data = T))
+
+plot(ggpredict(full_log, terms = "sla", back.transform= TRUE, add.data = T))
+
+model_pred
+```

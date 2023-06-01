@@ -19,26 +19,32 @@ library(GGally)
 ```
 
 ```{r}
+#reading in the data
 plant <- read_csv(here("knb-lter-hfr", "hf109-01-sarracenia.csv")) %>% 
+  #selecting for columns of interest
   select(totmass, species, feedlevel, sla,chlorophyll, amass, num.lvs, num.phylls)
 ```
 
 ```{r}
+#look for missing variables
 gg_miss_var(plant)
 ```
 
 ```{r}
+#drop the NAs
 plant_subset <- plant %>% 
   drop_na(sla, chlorophyll, amass, num.lvs, num.phylls)
 ```
 
 ```{r}
+#calculate Pearson's r for numerical values only 
 plant_cor <- plant_subset %>% 
   select(feedlevel:num.phylls) %>% 
   cor(method = "pearson")
 ```
 
 ```{r}
+#create a correlation plot
 corrplot(plant_cor,
          # change the shape of what's in the cells
          method = "ellipse",
@@ -47,17 +53,21 @@ corrplot(plant_cor,
 ```
 
 ```{r}
+#create plot of each variable compared against the others
 plant_subset %>% 
   select(species:num.phylls) %>% 
   ggpairs()
 ```
 
 ```{r}
+#starting regression
+#fit multiple linear models
 null <- lm(totmass ~ 1, data = plant_subset)
 full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
 ```
 
 ```{r}
+#visually assess normality and homoskedacity using diagnostic plots for the full model 
 par(mfrow = c(2, 2))
 plot(full)
 ```

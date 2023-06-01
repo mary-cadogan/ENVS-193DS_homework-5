@@ -1,0 +1,98 @@
+---
+title: "homework5"
+format: html
+editor: visual
+---
+
+## 
+
+6.  Introduction (5-10 sentences)
+
+**a. What are Sarracenia?** Sarracenia is a genus of carnivorous pitcher plants that receives their nutrients from captured prey and atmospheric depostition (Wakefield et al., 2005). **\
+b. Why might people care about them?** They are a good subject for the study of ecological stoichemetry (energy) and nutrient limitation because they provide insight into the processes that control patterns of species distributions, abundances, and population dynamics due to their unique methods of obtaining nutrients (such as nitrogen and phosphorus) (Wakefield et al., 2005). **\
+c. Why do you think it could be useful and/or important to predict individual biomass from morphological, physiological, or taxonomic characteristics?**
+
+They are highly sensitive to N:P ratios so they respond differently to inputs of prey and atmospheric deposition (Wakefield et al., 2005). It is important to know which characteristics predict individual biomass
+
+\
+**d. What questions are you addressing**? This study is testing how different Sarracenia characteristics predict biomass? \
+**e. What hypotheses are you testing?** The null hypothesis is that no variable predicts biomass.
+
+Higher feed levels, high levels of chlorophyll, and predict Sarracenia biomass. **\
+f. Include 3-5 in-text citations of peer-reviewed work.**
+
+[**https://doi.org/10.1890/04-1673**](https://doi.org/10.1890/04-1673)
+
+7\. Write a methods section that includes
+
+**a. Sampling methods (these should be summarized from the metadata and cited)**
+
+Two plants of each Sarracenia species (S. alabamensis, S. alata, S. flava, S. jonesii, S. leucophylla, S. minor, S. psittacina, S. purpurea, S. rosea, and S. rubra) were assigned to one of six feeding levels and were fed once a week for 7 weeks. 120 total plants were tested. Aboveground size and Amass were measured prior to treatments.
+
+**b. Description of data organization and processing (1-3 sentences)**
+
+Raw data was organized by selecting for the variables we are testing: species type, amount (grams) of ground hymenoptera being fed per week (feed level), specific Leaf Area (cm2/g of the youngest fully-extended leaf), chorophyll content of youngest fully-expanded leaf (mg/g), amass: mass-based light-saturated photosynthetic rate of youngest leaf (nmol CO2 x g-1 x s-1), total number of pitchers and phyllodes produced by each plant, and number of phyllodes produced by each plant.
+
+\
+**c. Visualization of missing observations with an accompanying caption and discussion\
+(caption: 1-3 sentences, discussion: 1-3 sentences)**
+
+```{r}
+gg_miss_var(plant) %>% 
+  labs(caption = "Missing variables in Sarracenia dataset. Chlorophyll and amass are missing 14 observations, sla is missing 10, and total of number of pitches and phyloods and number of phyllodes are missing 2. Total mass, species, and feed level are not missing anydata") 
+```
+
+\
+**d. Visualization of Pearson\'s correlation between variables with an accompanying\
+caption and discussion (caption: 1-3 sentences, discussion: 1-3 sentences)**
+
+```{r}
+plant_cor <- plant_subset %>% 
+  select(feedlevel:num.phylls) %>% 
+  cor(method = "pearson")
+```
+
+```{r}
+corrplot(plant_cor,
+         # change the shape of what's in the cells
+         method = "ellipse",
+         addCoef.col = "black") %>% 
+  labs(caption = "Pearson's correlation between variables with negative numbers indicating a negative correlation and postive numbers indicating a positive correlation")
+```
+
+\
+**e. Visualization of relationships between variables (not correlation) with an\
+accompanying caption and discussion (caption: 1-3 sentences, discussion: 1-3\
+sentences)**
+
+```{r}
+plant_subset %>% 
+  select(species:num.phylls) %>% 
+  ggpairs()
+```
+
+\
+**f. Creating the null and full model with accompanying discussion (1-3 sentences)**
+
+```{r}
+null_log <- lm(log(totmass) ~ 1, data =plant_subset)
+full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
+```
+
+**\
+g. Visual and statistical assumption checks for the full model with accompanying\
+discussion (1-3 sentences)**
+
+```{r}
+#visually assess normality and homoskedasticity of residuals using diangostic plots for the full model: 
+plot(full_log)
+check_normality(full_log)
+check_heteroscedasticity(full_log)
+```
+
+**\
+h. Explanation of any transformation and justification (1-3 sentences)**
+
+```{r}
+
+```

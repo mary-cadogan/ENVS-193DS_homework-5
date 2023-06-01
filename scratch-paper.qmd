@@ -73,59 +73,71 @@ plot(full)
 ```
 
 ```{r}
+#test for normality using the Shapiro-Wilk test (null hypothesis: variable of interest (i.e. the residuals) are normally distributed).
 check_normality(full)
+#test for heteroskedasticity using the Breush-Pagan test(null hypothesis: variable of interest has constant variance)
 check_heteroscedasticity(full)
 ```
 
 ```{r}
+#to determine how species and physiological characteristics predict biomass, we fit multiple linear models
+null_log <- lm(log(totmass) ~ 1, data =plant_subset)
 full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
-
+#visually assess normality and homoskedasticity of residuals using diangostic plots for the full model: 
 plot(full_log)
 check_normality(full_log)
 check_heteroscedasticity(full_log)
 ```
 
 ```{r}
+#evaluate multicollinearity 
 car::vif(full_log)
+#we evaluated multicollinearity by calculating generalized variance inflation factor and determined that... 
 ```
 
 ```{r}
+#trying more models to address the question: what set of predictor variables best explains the response?
 model2_log <- lm(log(totmass) ~ species, data = plant_subset)
 ```
 
 ```{r}
+#check assumptions for model 2
+plot(model2_log)
 check_normality(model2_log)
 check_heteroscedasticity(model2_log)
 ```
 
 ```{r}
-null_log <- lm(log(totmass) ~ 1, data =plant_subset)
-```
-
-```{r}
+#compare models using AIC values
 AICc(full_log)
 AICc(model2_log)
 AICc(null_log)
+#lowest AIC value was full_log 
 
 MuMIn::AICc(full_log, model2_log, null_log)
 MuMIn::model.sel(full_log, model2_log, null_log)
 ```
 
 ```{r}
+ 
 summary(full_log)
 
 table <- tidy(full_log, conf.int = TRUE) %>% 
-  #change p value numbers if they are really small
+  #change p value numbers if they are really small 
+  mutate(p.value = case_when(p.value < 0.001 ~ "< 0.001"))
   #change the estimates, standard error, and t-statistics to round to __ digits 
+  mutate(statistic = round(statistic, digits = 1)) %>%
   #using mutate
   #make it into a flextable 
   flextable() %>% 
   #fit it to the viewer
   autofit()
   
+table
 ```
 
 ```{r}
+#using ggpredict() to banktranform estimates
 model_pred <- ggpredict(full_log, terms = "species", back.transform = TRUE)
 
 plot(ggpredict(full_log, terms = "chlorophyll", back.transform = TRUE, add.data = T))

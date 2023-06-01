@@ -27,7 +27,7 @@ f. Include 3-5 in-text citations of peer-reviewed work.**
 
 **a. Sampling methods (these should be summarized from the metadata and cited)**
 
-Two plants of each Sarracenia species (S. alabamensis, S. alata, S. flava, S. jonesii, S. leucophylla, S. minor, S. psittacina, S. purpurea, S. rosea, and S. rubra) were assigned to one of six feeding levels and were fed once a week for 7 weeks. 120 total plants were tested. Aboveground size and Amass were measured prior to treatments.
+Two plants of each Sarracenia species (S. alabamensis, S. alata, S. flava, S. jonesii, S. leucophylla, S. minor, S. psittacina, S. purpurea, S. rosea, and S. rubra) were assigned to one of six feeding levels and were fed once a week for 7 weeks. 120 total plants were tested and aboveground size and Amass were measured prior to treatments.
 
 **b. Description of data organization and processing (1-3 sentences)**
 
@@ -39,8 +39,10 @@ Raw data was organized by selecting for the variables we are testing: species ty
 
 ```{r}
 gg_miss_var(plant) %>% 
-  labs(caption = "Missing variables in Sarracenia dataset. Chlorophyll and amass are missing 14 observations, sla is missing 10, and total of number of pitches and phyloods and number of phyllodes are missing 2. Total mass, species, and feed level are not missing anydata") 
+  labs(caption = "Missing variables in Sarracenia dataset. Chlorophyll and Amass are missing 14 observations, specific Leaf Area is missing 10, and total of number of pitches and phyllodes and number of phyllodes are missing 2. Total mass, species, and feed level are not missing anydata") 
 ```
+
+Missing data in the chlorophyll, amass, specific Leaf Area, total number of pitchers and phyllodes and number of phyllodes will impact correlational data.
 
 \
 **d. Visualization of Pearson\'s correlation between variables with an accompanying\
@@ -90,7 +92,7 @@ check_normality(full_log)
 check_heteroscedasticity(full_log)
 ```
 
-**\
+Using diagnostic tests and statistical assumptions the data appears to be normally distributed and homoscedatic **\
 h. Explanation of any transformation and justification (1-3 sentences)**
 
 ```{r}

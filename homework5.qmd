@@ -6,7 +6,7 @@ editor: visual
 
 ## 
 
-6.  Introduction (5-10 sentences)
+6.  Introduction (5-10 sentences) hi
 
 **a. What are Sarracenia?** Sarracenia is a genus of carnivorous pitcher plants that receives their nutrients from captured prey and atmospheric depostition (Wakefield et al., 2005). **\
 b. Why might people care about them?** They are a good subject for the study of ecological stoichemetry (energy) and nutrient limitation because they provide insight into the processes that control patterns of species distributions, abundances, and population dynamics due to their unique methods of obtaining nutrients (such as nitrogen and phosphorus) (Wakefield et al., 2005). **\

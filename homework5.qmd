@@ -59,8 +59,10 @@ corrplot(plant_cor,
          # change the shape of what's in the cells
          method = "ellipse",
          addCoef.col = "black") %>% 
-  labs(caption = "Pearson's correlation between variables with negative numbers indicating a negative correlation and postive numbers indicating a positive correlation")
+  labs(caption = "Pearson's correlation between variables with -1 indicating a total negative correlation and +1 indicating a total positive correlation")
 ```
+
+The Pearson's correlation table shows a generally weak correlation between all the variables with the the highest correlations being between amass and sla (0.32), sla and feedlevel (-0.3), sla and num.phylls (-0.3), and amass and num.lvs (-0.31). The results indicate that sla has slight correlations with more of the variables compared to the others.
 
 \
 **e. Visualization of relationships between variables (not correlation) with an\
@@ -69,16 +71,17 @@ sentences)**
 
 ```{r}
 plant_subset %>% 
-  select(species:num.phylls) %>% 
-  ggpairs()
+  select(totmass:num.phylls) %>% 
+  ggpairs() %>% 
+  labs(caption = "Visual of ")
 ```
 
 \
 **f. Creating the null and full model with accompanying discussion (1-3 sentences)**
 
 ```{r}
-null_log <- lm(log(totmass) ~ 1, data =plant_subset)
-full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
+null <- lm(totmass ~ 1, data = plant_subset)
+full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
 ```
 
 **\
@@ -87,16 +90,60 @@ discussion (1-3 sentences)**
 
 ```{r}
 #visually assess normality and homoskedasticity of residuals using diangostic plots for the full model: 
-plot(full_log)
-check_normality(full_log)
-check_heteroscedasticity(full_log)
+par(mfrow = c(2, 2))
+plot(full)
+check_normality(full)
+check_heteroscedasticity(full)
 ```
 
-Using diagnostic tests and statistical assumptions the data appears to be normally distributed and homoscedatic
+Using diagnostic tests and statistical assumptions the normality and homoscedastic assumptions appear to be violated. There are a few identified outliers
 
 **\
 h. Explanation of any transformation and justification (1-3 sentences)**
 
 ```{r}
+null_log <- lm(log(totmass) ~ 1, data =plant_subset)
+full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
 
+par(mfrow = c(2, 2))
+plot(full_log)
+check_normality(full_log)
+check_heteroscedasticity(full_log)
+```
+
+In order to meet the assumptions, I transformed the data to log data.
+
+**i.**
+
+```{r}
+model_2_log <- lm(log(amass) ~ species, data = plant_subset)
+model_3_log <- lm(log(feedlevel) ~ species, data = plant_subset)
+
+```
+
+```{r}
+plot(model_2_log)
+
+check_normality(model_2_log)
+check_heteroscedasticity(model_2_log)
+```
+
+```{r}
+plot(model_3_log)
+
+check_normality(model_3_log)
+check_heteroscedasticity(model_3_log)
+```
+
+```{r}
+plot(model_4_log)
+
+check_normality(model_4_log)
+check_heteroscedasticity(model_4_log)
+```
+
+j\.
+
+```{r}
+car::vif(full_log)
 ```

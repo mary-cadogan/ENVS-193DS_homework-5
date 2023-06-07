@@ -3,4 +3,6 @@ This repository explores Sarracenia characteristics to see what variables may pr
 
 The rendered document is [here](
 
-The data was retrieved from Effects of Prey Availability on Sarracenia Physiology at Harvard Forest 2005. Data can be located [here](https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-hfr.109.18)
+The data was retrieved from Effects of Prey Availability on Sarracenia Physiology at Harvard Forest 2005 by Aaron Ellison and Elizabeth Farnsworth. 
+
+Data can be located [here](https://portal.edirepository.org/nis/mapbrowse?packageid=knb-lter-hfr.109.18)

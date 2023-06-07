@@ -16,6 +16,7 @@ library(broom)
 library(corrplot)
 library(AICcmodavg)
 library(GGally)
+library(MuMIn)
 ```
 
 ```{r}
@@ -146,7 +147,7 @@ model_pred <- ggpredict(full_log, terms = "species", back.transform = TRUE)
 
 plot(ggpredict(full_log, terms = "chlorophyll", back.transform = TRUE, add.data = T))
 
-plot(ggpredict(full_log, terms = "sla", back.transform= TRUE, add.data = T))
+plot(ggpredict(full_log, terms = "chlorophyll", back.transform= TRUE, add.data = T))
 
 model_pred
 ```

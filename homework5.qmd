@@ -1,149 +1,206 @@
 ---
-title: "homework5"
-format: html
-editor: visual
+title: "Homework 5"
+authot: "Mary Cadogan"
+date: "June 6, 2023"
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: true
+    theme: yeti
+execute:
+  message: false
+  warning: false
 ---
 
-## 
+Link to github repo: <https://github.com/mary-cadogan/ENVS-193DS_homework-5>
 
-6.  Introduction (5-10 sentences)
+# **Introduction**
 
-**a. What are Sarracenia?** Sarracenia is a genus of carnivorous pitcher plants that receives their nutrients from captured prey and atmospheric depostition (Wakefield et al., 2005). **\
-b. Why might people care about them?** They are a good subject for the study of ecological stoichemetry (energy) and nutrient limitation because they provide insight into the processes that control patterns of species distributions, abundances, and population dynamics due to their unique methods of obtaining nutrients (such as nitrogen and phosphorus) (Wakefield et al., 2005). **\
-c. Why do you think it could be useful and/or important to predict individual biomass from morphological, physiological, or taxonomic characteristics?**
+Sarracenia is a genus of carnivorous pitcher plants that receives their nutrients from captured prey and atmospheric depostition (Wakefield et al., 2005). They are a good subject for the study of ecological stoichemetry (energy) and nutrient limitation because they provide insight into the processes that control patterns of species distributions, abundances, and population dynamics due to their unique methods of obtaining nutrients (such as nitrogen and phosphorus) (Wakefield et al., 2005). They are highly sensitive to N:P ratios so they respond differently to inputs of prey and atmospheric deposition (Wakefield et al., 2005). Plant biomass mainly consists of cellulose, lignin, hemicellulose, pectin, extractives, and inorganic components (Yang and Lu, 2021). Determining what influences the production of these factors is important for assessing the inputs that pitcher plants need to grow. This study aims to test how different Sarracenia characteristics predict biomass and will be primarily looking at chlorophyll content, feed level, and amass (photosynthetic rate). Most plants accumulate biomass via photosynthesis (Zhu et al., 2008), however Sarracenia plants are rare in the way they also get energy from insects. The null hypothesis is that these factors do not influence Sarracenia biomass and the alternative hypothesis is that at least one of the factors does influence biomass.
 
-They are highly sensitive to N:P ratios so they respond differently to inputs of prey and atmospheric deposition (Wakefield et al., 2005). It is important to know which characteristics predict individual biomass
-
-\
-**d. What questions are you addressing**? This study is testing how different Sarracenia characteristics predict biomass?\
-**e. What hypotheses are you testing?** The null hypothesis is that no variable predicts biomass.
-
-Higher feed levels, high levels of chlorophyll, and predict Sarracenia biomass. **\
-f. Include 3-5 in-text citations of peer-reviewed work.**
-
-[**https://doi.org/10.1890/04-1673**](https://doi.org/10.1890/04-1673)
-
-7\. Write a methods section that includes
-
-**a. Sampling methods (these should be summarized from the metadata and cited)**
+# **Methods**
 
 Two plants of each Sarracenia species (S. alabamensis, S. alata, S. flava, S. jonesii, S. leucophylla, S. minor, S. psittacina, S. purpurea, S. rosea, and S. rubra) were assigned to one of six feeding levels and were fed once a week for 7 weeks. 120 total plants were tested and aboveground size and Amass were measured prior to treatments.
 
-**b. Description of data organization and processing (1-3 sentences)**
-
-Raw data was organized by selecting for the variables we are testing: species type, amount (grams) of ground hymenoptera being fed per week (feed level), specific Leaf Area (cm2/g of the youngest fully-extended leaf), chorophyll content of youngest fully-expanded leaf (mg/g), amass: mass-based light-saturated photosynthetic rate of youngest leaf (nmol CO2 x g-1 x s-1), total number of pitchers and phyllodes produced by each plant, and number of phyllodes produced by each plant.
-
-\
-**c. Visualization of missing observations with an accompanying caption and discussion\
-(caption: 1-3 sentences, discussion: 1-3 sentences)**
+Raw data was first cleaned and then organized by selecting for the variables we are testing: total mass (g), species type, amount (grams) of ground hymenoptera being fed per week (feed level), specific Leaf Area (cm2/g of the youngest fully-extended leaf), chorophyll content of youngest fully-expanded leaf (mg/g), amass: mass-based light-saturated photosynthetic rate of youngest leaf (nmol CO2 x g-1 x s-1), total number of pitchers and phyllodes produced by each plant, and number of phyllodes produced by each plant. This created a subset of data that we analyzed.
 
 ```{r}
-gg_miss_var(plant) %>% 
-  labs(caption = "Missing variables in Sarracenia dataset. Chlorophyll and Amass are missing 14 observations, specific Leaf Area is missing 10, and total of number of pitches and phyllodes and number of phyllodes are missing 2. Total mass, species, and feed level are not missing anydata") 
+#determine what variables are missing from the data using gg_miss_var
+gg_miss_var(plant) +
+  #create and center caption 
+  labs(caption = "Number of missing variables in Sarracenia dataset") +
+  theme(plot.caption = element_text(hjust = 0.5))
 ```
 
-Missing data in the chlorophyll, amass, specific Leaf Area, total number of pitchers and phyllodes and number of phyllodes will impact correlational data.
-
-\
-**d. Visualization of Pearson's correlation between variables with an accompanying\
-caption and discussion (caption: 1-3 sentences, discussion: 1-3 sentences)**
+Chlorophyll and Amass are missing 14 observations, specific Leaf Area is missing 10, and total of number of pitches and phyllodes and number of phyllodes are missing 2. Total mass, species, and feed level are not missing anydata. The missing data will impact the data analysis.
 
 ```{r}
+#create plant correlation object that selects the variables from plant_subset. The pearson method to determine relationship between numerical values. 
 plant_cor <- plant_subset %>% 
   select(feedlevel:num.phylls) %>% 
   cor(method = "pearson")
-```
 
-```{r}
+# Create the correlation plot
 corrplot(plant_cor,
-         # change the shape of what's in the cells
          method = "ellipse",
-         addCoef.col = "black") %>% 
-  labs(caption = "Pearson's correlation between variables with -1 indicating a total negative correlation and +1 indicating a total positive correlation")
+         addCoef.col = "black") 
+#add caption 
+labs(caption = "Pearson's correlation between variables with -1 indicating a total negative correlation and +1 indicating a total positive correlation")
 ```
 
 The Pearson's correlation table shows a generally weak correlation between all the variables with the the highest correlations being between amass and sla (0.32), sla and feedlevel (-0.3), sla and num.phylls (-0.3), and amass and num.lvs (-0.31). The results indicate that sla has slight correlations with more of the variables compared to the others.
 
-\
-**e. Visualization of relationships between variables (not correlation) with an\
-accompanying caption and discussion (caption: 1-3 sentences, discussion: 1-3\
-sentences)**
-
 ```{r}
+#use ggpairs to show how all the variables from plant_subset relate to one another 
 plant_subset %>% 
-  select(totmass:num.phylls) %>% 
-  ggpairs() %>% 
-  labs(caption = "Visual of ")
+  select(feedlevel:num.phylls) %>% 
+  ggpairs() +
+  labs(caption = "Visual of relationships between variables") +
+  theme(plot.caption = element_text(hjust = 0.5))
 ```
 
-\
-**f. Creating the null and full model with accompanying discussion (1-3 sentences)**
+The visualization shows that some variables may be related, including sla and feedlevel, sla and chlorophyll, num.phylls and feedlevel, num.phylls and sla, num.lvs and amass, amass and sla, num.lvs and chlorophyll, and num.phylls and num.lvs. The predictor variables may then be also related to each other, so collinearity is going to need to be tested.
 
 ```{r}
+#use linear model test to create a null model and full model. The full model includes all of the predictor variables. 
 null <- lm(totmass ~ 1, data = plant_subset)
 full <- lm(totmass ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
+
+null
+full
 ```
 
-**\
-g. Visual and statistical assumption checks for the full model with accompanying\
-discussion (1-3 sentences)**
+The null model only includes a constant (totmass \~ 1) and assumes totmass has no predictor variables. The null model is used as a comparison for the full model, which identifies the variables as potential predictors for totmass.
 
 ```{r}
 #visually assess normality and homoskedasticity of residuals using diangostic plots for the full model: 
 par(mfrow = c(2, 2))
 plot(full)
+#run Shapiro-Wilk test 
 check_normality(full)
+#run Breusch-Pagan test
 check_heteroscedasticity(full)
 ```
 
-Using diagnostic tests and statistical assumptions the normality and homoscedastic assumptions appear to be violated. There are a few identified outliers
-
-**\
-h. Explanation of any transformation and justification (1-3 sentences)**
+Using diagnostic tests and statistical assumptions the normality and homoscedastic assumptions appear to be violated because the data points are not evenly distributed around the horizontal line. There are also a few identified outliers in the Normal QQ-Plot that change the shape of the data. Therefore, corrections will need to be made in order to run the multilinear regression.
 
 ```{r}
+#log the null and full models 
 null_log <- lm(log(totmass) ~ 1, data =plant_subset)
 full_log <- lm(log(totmass) ~ species + feedlevel + sla + chlorophyll + amass + num.lvs + num.phylls, data = plant_subset)
 
+#check normality and homoscedasticity visually an using Shapiro-Wilk test  and Breusch-Pagan test
 par(mfrow = c(2, 2))
 plot(full_log)
 check_normality(full_log)
 check_heteroscedasticity(full_log)
 ```
 
-In order to meet the assumptions, I transformed the data to log data.
+In order to meet the assumptions, I did a log transformation so that the data is normally distributed and homoscedastic.
 
 **i.**
 
 ```{r}
-model_2_log <- lm(log(amass) ~ species, data = plant_subset)
-model_3_log <- lm(log(feedlevel) ~ species, data = plant_subset)
-
+#create other linear models using the amas,, chlorophyll, and feedlevel varaiables. Species was added so that assumptions are not violated
+model_3_log <- lm(log(totmass) ~ amass + species, data = plant_subset)
+model_4_log <- lm(log(totmass) ~ chlorophyll + species, data = plant_subset)
+model_5_log <- lm(log(totmass) ~ feedlevel + species, data = plant_subset)
 ```
 
-```{r}
-plot(model_2_log)
-
-check_normality(model_2_log)
-check_heteroscedasticity(model_2_log)
-```
+I added species to all the the models as a way to correct for non-normality and heteroscedastcity. I chose amass because it is indicator of photosynthetic rate, chlorophyll because it is an indicator of a plant's photosynthetic capability, and feed level because their food provides the plant energy. These three variables all inputs that may impact plant biomass because plants need energy to grow and I wanted to see the difference between insects and sunlight as energy.
 
 ```{r}
+#check normality and homoscedasticity of the new linear models 
 plot(model_3_log)
 
 check_normality(model_3_log)
 check_heteroscedasticity(model_3_log)
-```
 
-```{r}
 plot(model_4_log)
 
 check_normality(model_4_log)
 check_heteroscedasticity(model_4_log)
+
+plot(model_5_log)
+
+check_normality(model_5_log)
+check_heteroscedasticity(model_5_log)
 ```
 
 j\.
 
 ```{r}
+#evaluate multicollinearity 
 car::vif(full_log)
 ```
+
+The only GVIF value above 5 was species but was corrected by the GVIF\^(2\*Df). Since all other values were below 5, there appear to be no multicollinearity (intercorrelation between predictor variables in regression) issues especially for the predictor variables we are testing.
+
+k\.
+
+```{r}
+#compare models using Akaike's Information criterion (AIC) values
+AICc(full_log)
+AICc(model_3_log)
+AICc(model_4_log)
+AICc(model_5_log)
+AICc(null_log)
+
+MuMIn::AICc(full_log, model_3_log, model_4_log, model_5_log, null_log)
+MuMIn::model.sel(full_log, model_3_log, model_4_log, model_5_log, null_log)
+```
+
+The lowest AIC value was the full_log model followed by the model_4\_log, then model_5\_log, then model_3\_log, and then null_log. This means that the full_log would be the best fit model and null_log would be the worst. However, the other 3 models have a lot less predictor variables than the full_log so model_4\_log would be the best fit model.
+
+# **Results**
+
+The full_log model had a lower AIC value of 133.9 but is a more complex model, whereas the model_4\_log had the lowest AIC of 146 with the least amount of explanatory variables.
+
+```{r}
+#create summary table of the full_log model 
+summary(model_4_log)
+
+table <- tidy(model_4_log, conf.int = TRUE) %>% 
+  #change p value numbers if they are really small 
+  mutate(p.value = case_when(p.value < 0.001 ~ "< 0.001")) %>% 
+  #change the estimates, standard error, and t-statistics to round to __ digits 
+  mutate(statistic = round(statistic, digits = 3)) %>%
+  mutate(estimate = round(estimate, digits = 3)) %>%
+  mutate(std.error = round(std.error, digits = 3)) %>%
+  mutate(conf.low = round(conf.low, digits = 3)) %>%
+  mutate(conf.high = round(conf.high, digits = 3)) %>%
+  #using mutate
+  #make it into a flextable 
+  flextable() %>% 
+  #fit it to the viewer
+  autofit()
+  
+table
+```
+
+The model_4\_log model shows how chlorophyll and the following species: salata, flava, leucophylla, spsittacina, rosea, and rubra were statistically significant on biomass with p values less than 0.01. The negative estimates show where negative correlation exists and positive estiamtes show where positive correlation exists. Chlorophyll had a very low estimate but still a significant p value.
+
+```{r}
+#create plot of model_4_log using chlorophyll on x axis and total mass on y axis. use ggpredict() to backtransform estimates 
+model_pred2 <- ggpredict(model_4_log, terms = "species", back.transform = TRUE)
+
+plot(ggpredict(model_4_log, terms = "chlorophyll", back.transform= TRUE, add.data = T)) +
+#edit and clean up the graph 
+  labs(caption = "Data source: Effects of Prey Availability on Sarracenia Physiology at Harvard Forest 2005" , x = "Chlorophyll (mg/g)", y = "Biomass (g)", title = "Chlorophyll Content as a Predictor of Sarracenia Biomass") + 
+theme_classic() +
+theme(plot.caption = element_text(hjust = 0.5), 
+      plot.title = element_text(hjust = 0.5))
+
+model_pred2
+```
+
+The results of this model indicate that there is a slight posititve correlation between chlorophyll content and Sarracenia biomass, additionally proven with a p value of less than 0.01. This reveals that although Sarracenia plants receive a large portion of their energy from insects, that chlorophyll concentration (which is used to make food during photosynthesis) is still highly relevant for biomass accumulation. Therefore, these plants would not be able to survive on insects only and must still receive sunlight.
+
+# Bibliography
+
+Wakefield, A. E., Gotelli, N. J., Wittman, S. E., & Ellison, A. M. (2005). Prey addition alters nutrient stoichiometry of the carnivorous plant Sarracenia purpurea. *Ecology*, *86*(7), 1737--1743. https://doi.org/10.1890/04-1673 
+
+Yang, C., & Lü, X. (2021). Composition of plant biomass and its impact on pretreatment. *Advances in 2nd Generation of Bioethanol Production*, 71--85. https://doi.org/10.1016/b978-0-12-818862-0.00002-9 
+
+Zhu, X.-G., Long, S. P., & Ort, D. R. (2008). What is the maximum efficiency with which photosynthesis can convert solar energy into biomass? *Current Opinion in Biotechnology*, *19*(2), 153--159. https://doi.org/10.1016/j.copbio.2008.02.004 

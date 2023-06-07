@@ -1,6 +1,6 @@
 ---
 title: "Homework 5"
-authot: "Mary Cadogan"
+author: "Mary Cadogan"
 date: "June 6, 2023"
 format:
   html:
@@ -23,7 +23,34 @@ Sarracenia is a genus of carnivorous pitcher plants that receives their nutrient
 
 Two plants of each Sarracenia species (S. alabamensis, S. alata, S. flava, S. jonesii, S. leucophylla, S. minor, S. psittacina, S. purpurea, S. rosea, and S. rubra) were assigned to one of six feeding levels and were fed once a week for 7 weeks. 120 total plants were tested and aboveground size and Amass were measured prior to treatments.
 
-Raw data was first cleaned and then organized by selecting for the variables we are testing: total mass (g), species type, amount (grams) of ground hymenoptera being fed per week (feed level), specific Leaf Area (cm2/g of the youngest fully-extended leaf), chorophyll content of youngest fully-expanded leaf (mg/g), amass: mass-based light-saturated photosynthetic rate of youngest leaf (nmol CO2 x g-1 x s-1), total number of pitchers and phyllodes produced by each plant, and number of phyllodes produced by each plant. This created a subset of data that we analyzed.
+```{r}
+library(tidyverse)
+library(here)
+library(ggeffects)
+library(performance)
+library(naniar)
+library(flextable)
+library(car)
+library(broom)
+library(corrplot)
+library(AICcmodavg)
+library(GGally)
+library(MuMIn)
+```
+
+```{r}
+#load in data
+plant <- read_csv(here("knb-lter-hfr", "hf109-01-sarracenia.csv")) %>% 
+  #selecting for columns of interest
+  select(totmass, species, feedlevel, sla,chlorophyll, amass, num.lvs, num.phylls)
+
+#drop the NAs
+plant_subset <- plant %>% 
+  drop_na(sla, chlorophyll, amass, num.lvs, num.phylls, feedlevel)
+
+```
+
+Raw data was first cleaned and then organized by selecting for the variables we are testing: total mass (g), species type, amount (grams) of ground hymenoptera being fed per week (feed level), specific Leaf Area (cm2/g of the youngest fully-extended leaf), chorophyll content of youngest fully-expanded leaf (mg/g), amass: mass-based light-saturated photosynthetic rate of youngest leaf (nmol CO2 x g-1 x s-1), total number of pitchers and phyllodes produced by each plant, and number of phyllodes produced by each plant. This created a subset of data that we analyzed that also got rid of the missing variables.
 
 ```{r}
 #determine what variables are missing from the data using gg_miss_var
@@ -33,7 +60,7 @@ gg_miss_var(plant) +
   theme(plot.caption = element_text(hjust = 0.5))
 ```
 
-Chlorophyll and Amass are missing 14 observations, specific Leaf Area is missing 10, and total of number of pitches and phyllodes and number of phyllodes are missing 2. Total mass, species, and feed level are not missing anydata. The missing data will impact the data analysis.
+Chlorophyll and Amass are missing 14 observations, specific Leaf Area is missing 10, and total of number of pitches and phyllodes and number of phyllodes are missing 2. Total mass, species, and feed level are not missing anydata. The missing data will impact the data analysis, so were removed in the subset.
 
 ```{r}
 #create plant correlation object that selects the variables from plant_subset. The pearson method to determine relationship between numerical values. 
